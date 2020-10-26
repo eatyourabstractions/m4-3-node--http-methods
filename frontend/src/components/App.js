@@ -12,6 +12,7 @@ const App = () => {
   const [disabled, setDisabled] = useState(true);
   const [subStatus, setSubStatus] = useState("idle");
   const [errMessage, setErrMessage] = useState("");
+  const [goodResults, setResults] = useState({});
 
   useEffect(() => {
     Object.values(formData).includes("") || formData.order === "undefined"
@@ -24,7 +25,8 @@ const App = () => {
     setErrMessage("");
   };
 
-  const handleClick = () => {
+  const handleClick = (ev) => {
+    ev.preventDefault()
     setSubStatus("pending");
 
     fetch("/order", {
@@ -37,12 +39,15 @@ const App = () => {
     })
       .then((res) => res.json())
       .then((json) => {
-        const { status, error } = json;
+        console.log(json)
+        const { status, error, givenName, order, province } = json;
+        console.log(province)
         if (status === "success") {
-          window.location.href = "/order-confirmed";
-          setSubStatus = "confirmed";
+          setResults({name: givenName, product: order, province: province})
+          setSubStatus("confirmed");
+          
         } else if (error) {
-          setSubStatus = "error";
+          setSubStatus("error");
           setErrMessage(errorMessages[error]);
         }
       });
@@ -63,7 +68,7 @@ const App = () => {
           {subStatus === "error" && <ErrorMsg>{errMessage}</ErrorMsg>}
         </>
       ) : (
-        <ConfirmationMsg />
+        <ConfirmationMsg orderInfo={goodResults}/>
       )}
     </Wrapper>
   );

@@ -1,7 +1,7 @@
 const stock = {
   bottle: "229",
   socks: "342",
-  shirt: {
+  tshirt: {
     small: "45",
     medium: "0",
     large: "21",
